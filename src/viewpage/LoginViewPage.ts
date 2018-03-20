@@ -15,6 +15,10 @@ export class LoginViewPage extends ViewPage{
     onLoad(data: any) {
         this.usernameInput = this.getElementById("usernameInput");
         this.passwordInput = this.getElementById("passwordInput");
+
+        this.usernameInput.val("lcleite");
+        this.passwordInput.val("123456");
+
         this.buttonOk = this.getElementById("buttonOk");
         this.setClickListener(this.buttonOk, () => this.goToMain());
     }
