@@ -1,7 +1,12 @@
 import {ViewPage} from "./ViewPage";
 import RWebSocket from "../ws/RWebSocket";
+import {WsMessage, WsMessageAction} from "../ws/WsMessage";
+import {WsMessageHandler} from "../ws/WsMessageHandler";
 
 export class MainViewPage extends ViewPage{
+
+    private messageHandler: WsMessageHandler;
+
     private username: string;
 
     private buttonLike: JQuery;
@@ -9,6 +14,7 @@ export class MainViewPage extends ViewPage{
     constructor(){
         super();
         this.url = "view/main.html";
+        this.messageHandler = new WsMessageHandler();
     }
 
     onLoad(data: any) {
@@ -22,10 +28,10 @@ export class MainViewPage extends ViewPage{
         let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         let recWebSocket = new RWebSocket(ws_scheme + "://localhost:8000/ws/login/");
 
-        let messageData: any = {};
-        messageData.action = "connect";
-        messageData.data = {};
-        messageData.data.username = this.username;
+        let messageData = new WsMessage();
+        messageData.action = WsMessageAction.CONNECT;
+        messageData.data = "Hello";
+        messageData.channel = this.username;
 
         recWebSocket.onOpen(() => {
             recWebSocket.send(JSON.stringify(messageData));
@@ -33,7 +39,7 @@ export class MainViewPage extends ViewPage{
 
         recWebSocket.onMessage((message) => {
             console.log("MESSAGE");
-            console.log(message.data);
+            this.messageHandler.receive(message.data);
         });
 
         recWebSocket.onClose(() => {
