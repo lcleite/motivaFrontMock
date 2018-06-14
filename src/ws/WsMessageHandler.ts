@@ -6,7 +6,7 @@ export class WsMessageHandler{
 
     private serializer: WsMessageJsonSerializer = new WsMessageJsonSerializer();
 
-    receive(message: any){
+    receive(message: any): WsMessage {
         let messageData = this.serializer.toObject(message);
 
         if (messageData.action == null)
@@ -22,6 +22,8 @@ export class WsMessageHandler{
             case WsMessageAction.USER.valueOf():
                 break;
         }
+
+        return messageData;
     }
 
     private receiveConnection(message: WsMessage) {

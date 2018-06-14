@@ -27,4 +27,11 @@ export abstract class ViewPage{
         for(let id of this.clickableElementsId)
             $(document).off("click", id);
     }
+
+    showNotification(text: string) {
+        let notification = $("#notification");
+
+        notification.html("<p>" + text + "</p>");
+        notification.show();
+    }
 }

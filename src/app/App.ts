@@ -1,6 +1,7 @@
 import {ViewPage} from "../viewpage/ViewPage";
 import RWebSocket from "../ws/RWebSocket";
 import {WsMessageHandler} from "../ws/WsMessageHandler";
+import {WsMessageAction} from "../ws/WsMessage";
 export abstract class App{
 
     private static mainPage: ViewPage;
@@ -18,7 +19,11 @@ export abstract class App{
 
         App.websocket.onMessage((message) => {
             console.log("MESSAGE");
-            App.messageHandler.receive(message.data);
+            let receivedMessage = App.messageHandler.receive(message.data);
+
+            if (receivedMessage.action == WsMessageAction.NOTIFICATION.valueOf()) {
+                App.mainPage.showNotification(receivedMessage.data.text);
+            }
         });
 
         App.websocket.onClose(() => {
