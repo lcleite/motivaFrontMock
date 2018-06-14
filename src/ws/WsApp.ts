@@ -49,7 +49,7 @@ export class WsApp {
         // };
 
         $.ajax({
-            url: "http://localhost:8000/app/login/",
+            url: "http://localhost:8000/app/v1/login",
             type: 'post',
             dataType: 'json',
             data: user,

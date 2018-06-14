@@ -1,10 +1,35 @@
 import {ViewPage} from "../viewpage/ViewPage";
+import RWebSocket from "../ws/RWebSocket";
+import {WsMessageHandler} from "../ws/WsMessageHandler";
 export abstract class App{
 
     private static mainPage: ViewPage;
     private static stack: Array<ViewPage> = [];
     private static state: Map<ViewPage,string> = new Map();
     private static content: JQuery = $("#content");
+
+    private static messageHandler: WsMessageHandler;
+    public static websocket: RWebSocket;
+
+    static connectToWebsocket() {
+        let wsScheme = window.location.protocol == "https:" ? "wss" : "ws";
+        App.messageHandler = new WsMessageHandler();
+        App.websocket = new RWebSocket(wsScheme + "://localhost:8000/ws/login/");
+
+        App.websocket.onMessage((message) => {
+            console.log("MESSAGE");
+            App.messageHandler.receive(message.data);
+        });
+
+        App.websocket.onClose(() => {
+            console.log("Closed");
+        });
+
+        App.websocket.onError((err) => {
+            console.log("Error");
+            console.log(err);
+        });
+    }
 
     static run(){
         App.request(App.mainPage, null);

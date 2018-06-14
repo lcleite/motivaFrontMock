@@ -1,6 +1,9 @@
 import {ViewPage} from "./ViewPage";
 import {App} from "../app/App";
 import {MainViewPage} from "./MainViewPage";
+import {WsMessageHandler} from "../ws/WsMessageHandler";
+import {WsMessage, WsMessageAction} from "../ws/WsMessage";
+import RWebSocket from "../ws/RWebSocket";
 
 export class LoginViewPage extends ViewPage{
     private passwordInput: JQuery;
@@ -15,9 +18,6 @@ export class LoginViewPage extends ViewPage{
     onLoad(data: any) {
         this.usernameInput = this.getElementById("usernameInput");
         this.passwordInput = this.getElementById("passwordInput");
-
-        this.usernameInput.val("lcleite");
-        this.passwordInput.val("123456");
 
         this.buttonOk = this.getElementById("buttonOk");
         this.setClickListener(this.buttonOk, () => this.goToMain());
@@ -34,18 +34,30 @@ export class LoginViewPage extends ViewPage{
         };
 
         $.ajax({
-            url: "http://localhost:8000/app/login/",
+            url: "http://localhost:8000/app/v1/login",
             type: 'post',
             dataType: 'json',
             data: data,
             success: (data) => {
+                console.log("Logged In");
                 console.log(data);
-                App.push(new MainViewPage(), data);
+                this.sendConnectMessage(data);
+                App.push(new MainViewPage(), data.result);
             },
             error: (data) =>{
                 console.log(data);
                 alert("Erro ao logar!");
             }
         });
+    }
+
+    private sendConnectMessage(data: any) {
+        let message = new WsMessage();
+
+        message.action = WsMessageAction.CONNECT;
+        message.data = "Logged In";
+        message.channel = data.result.username;
+
+        App.websocket.send(JSON.stringify(message));
     }
 }

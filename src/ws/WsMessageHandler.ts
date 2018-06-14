@@ -6,16 +6,6 @@ export class WsMessageHandler{
 
     private serializer: WsMessageJsonSerializer = new WsMessageJsonSerializer();
 
-    // handleConnection(message: any){
-    //     let messageData = this.serializer.toObject(message);
-    //
-    //     if (messageData.action != WsMessageAction.CONNECT.valueOf())
-    //         return;
-    //
-    //     console.log("handleConnection()");
-    //     console.log(messageData);
-    // }
-
     receive(message: any){
         let messageData = this.serializer.toObject(message);
 
